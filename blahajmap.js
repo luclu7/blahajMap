@@ -32,8 +32,7 @@ var greenIcon = new L.Icon({
   .then((output) => {
       console.log('Output: ', output);
       output.forEach(element => {
-            let popupText = `<h1>${element.name}</h1><p>${element.address}</p>`
+            let popupText = `<h1>${element.name}</h1><p>${element.quantity === 0 ? "" : element.quantity+" exemplaires"}</p><p>${element.address}</p>`
             L.marker(element.position, {icon: element.quantity === 0 ? redIcon : greenIcon}).addTo(map).bindPopup(popupText);
-
       })
 }).catch(err => console.error(err));

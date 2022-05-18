@@ -30,7 +30,15 @@ let countries = [
     "ie",
     "be",
     "at",
-    "cz"
+    "cz",
+    "us",
+    "se",
+    "pl",
+    "sk",
+    "si",
+    "hu",
+    "hr",
+    "dk"
 ]
 countries.forEach(country => {
     
@@ -38,7 +46,13 @@ countries.forEach(country => {
     let rawdata = fs.readFileSync(`ikea${country}.json`);
     let ikeas = JSON.parse(rawdata);
     
-    fetch(`https://api.ingka.ikea.com/cia/availabilities/ru/${country}?itemNos=30373588&expand=StoresList,Restocks,SalesLocations`, {
+    let url = `https://api.ingka.ikea.com/cia/availabilities/ru/${country}?itemNos=30373588&expand=StoresList,Restocks,SalesLocations`
+
+    if(country == "us") {
+        url = `https://api.ingka.ikea.com/cia/availabilities/ru/us?itemNos=90373590&expand=StoresList,Restocks,SalesLocations`
+    }
+
+    fetch(url, {
         "credentials": "omit",
         "headers": {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:100.0) Gecko/20100101 Firefox/100.0",
@@ -58,18 +72,20 @@ countries.forEach(country => {
         element.availabilities.forEach((element, index) => {
             let ikeaCode = element.classUnitKey.classUnitCode
             //console.log(`${country}: ${ikeaCode} - ${index}`)
-            if(/[0-9]{3}/.test(ikeaCode) && ikeaCode != "653") {
+            if(/[0-9]{3}/.test(ikeaCode) && ikeaCode != "653" && ikeaCode != "622" && ikeaCode != "921" && ikeaCode != "658") {
                 
                 let obj = ikeas.find(o => o.value === ikeaCode);
                 //console.log(`IKEA ${ikeaCode}: ${obj.name} - ${element.availableForCashCarry ? element.buyingOption.cashCarry.availability.quantity : 0}`)
-                //console.log(obj)
-                let objectToReturn = {
-                    "name": obj.name,
-                    "address": obj.storeAddress.displayAddress,
-                    "position": [obj.storeAddress.position.latitude, obj.storeAddress.position.longitude],
-                    "quantity": element.availableForCashCarry ? element.buyingOption.cashCarry.availability.quantity : 0
+                    if(obj != undefined) {
+                    console.log(obj)
+                    let objectToReturn = {
+                        "name": obj.name,
+                        "address": obj.storeAddress.displayAddress,
+                        "position": [obj.storeAddress.position.latitude, obj.storeAddress.position.longitude],
+                        "quantity": element.availableForCashCarry ? element.buyingOption.cashCarry.availability.quantity : 0
+                    }
+                    output.push(objectToReturn)
                 }
-                output.push(objectToReturn)
             }
         })
     })

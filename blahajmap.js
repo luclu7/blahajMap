@@ -31,8 +31,9 @@ var greenIcon = new L.Icon({
   .then(result => result.json())
   .then((output) => {
       console.log('Output: ', output);
-      output.forEach(element => {
+      output.data.forEach(element => {
             let popupText = `<h1>${element.name}</h1><p>${element.quantity === 0 ? "" : element.quantity+" exemplaires"}</p><p>${element.address}</p>`
             L.marker(element.position, {icon: element.quantity === 0 ? redIcon : greenIcon}).addTo(map).bindPopup(popupText);
       })
+      document.getElementById("lastupdated").innerText=`Last updated ${output.time}`
 }).catch(err => console.error(err));

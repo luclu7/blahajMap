@@ -11,6 +11,7 @@ import { json } from 'node:stream/consumers';
 //let ikeaData = JSON.parse(rawdata);
 //console.log(ikeaData);
 let output = []
+let startTime = new Date().toISOString()
 
 
 function sleep(ms) {
@@ -94,5 +95,9 @@ countries.forEach(country => {
 })
 
 await sleep(1000)
-console.log(JSON.stringify(output))
-writeFileSync('blahaj.json', JSON.stringify(output))
+let toWrite = {
+    "data": output,
+    "time": startTime,
+}
+console.log(JSON.stringify(toWrite))
+writeFileSync('blahaj.json', JSON.stringify(toWrite))
